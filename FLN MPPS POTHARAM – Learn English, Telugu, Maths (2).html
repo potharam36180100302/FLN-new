@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FLN MPPS POTHARAM – Learn English, Telugu, Maths</title>
+<meta name="color-scheme" content="light">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Tammudu+2:wght@500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.454.0/dist/umd/lucide.min.js"></script>
+<style>
+:root{box-sizing:border-box;color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{margin:0;background:#fff8e8;color:#1f2937;font-family:'Baloo Tammudu 2','Noto Sans Telugu',system-ui,sans-serif;line-height:1.5}
+button{font-family:inherit;transition:transform .12s}
+button:active:not(:disabled){transform:scale(.95)}
+.pop{animation:pop .4s ease}
+@keyframes pop{0%{transform:scale(.6);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.fall{position:fixed;top:-40px;font-size:28px;z-index:50;pointer-events:none;animation:fall 2.4s linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg)}}
+</style>
+</head>
+<body>
+<div id="app" class="max-w-2xl mx-auto p-4"></div>
+<script>
+const SUBJ={
+en:{nm:"English",ic:"🔤",col:"from-orange-400 to-pink-500",lang:"en-IN",SN:["📖 Words / పదాలు","🧩 Sentences / వాక్యాలు","🏆 Quiz / క్విజ్"],L:[
+{n:"LKG",ic:"🔤",c:"from-pink-400 to-rose-500",t:"Alphabet and sounds",
+w:[["Apple","🍎"],["Ball","⚽"],["Cat","🐱"],["Dog","🐶"],["Egg","🥚"]],
+s:["A is for Apple","B is for Ball","C is for Cat","D is for Dog","E is for Egg"],
+q:[["Which letter starts Ball?",["B","D","P"],0],["C is for ...?",["Cat","Dog","Egg"],0],["Which one is a fruit?",["Apple","Ball","Cat"],0],["Dog starts with which letter?",["D","B","G"],0],["E is for ...?",["Egg","Ant","Cat"],0]]},
+{n:"UKG",ic:"🔡",c:"from-orange-400 to-amber-500",t:"Simple words",
+w:[["Sun","☀️"],["Hat","🎩"],["Pen","🖊️"],["Bus","🚌"],["Cup","☕"]],
+s:["I see a sun","I have a hat","This is my pen","The bus is big","I have a cup"],
+q:[["Which word rhymes with Hat?",["Cat","Bus","Pen"],0],["Which word starts with s?",["Sun","Hat","Pen"],0],["I ride a ...",["bus","pen","hat"],0],["Which one is for writing?",["Pen","Cup","Sun"],0],["Which word ends with t?",["Hat","Bus","Pen"],0]]},
+{n:"Class 1",ic:"📘",c:"from-lime-400 to-green-500",t:"Sight words and sentences",
+w:[["Fish","🐟"],["Bird","🐦"],["Book","📖"],["Tree","🌳"],["Milk","🥛"]],
+s:["This is a cat","I like to play","She has a red ball","We go to school","The bird can fly"],
+q:[["I like to ...",["play","blue","tree"],0],["This ... a cat",["is","am","are"],0],["A fish lives in ...",["water","a tree","a book"],0],["Which word starts with B?",["Book","Fish","Milk"],0],["Which is a sight word?",["the","zebra","purple"],0]]},
+{n:"Class 2",ic:"📗",c:"from-teal-400 to-cyan-500",t:"Vocabulary and sentences",
+w:[["Mango","🥭"],["School","🏫"],["Teacher","🧑‍🏫"],["Friend","🤝"],["Water","💧"]],
+s:["I eat a sweet mango","My teacher is kind","We play with our friends","Please drink clean water","I go to school every day"],
+q:[["Opposite of big?",["small","tall","long"],0],["I ... a mango.",["eat","run","sing"],0],["Many books are called ...",["books","bookes","bookies"],0],["Where do we study?",["School","Field","Shop"],0],["My teacher ... kind.",["is","are","am"],0]]},
+{n:"Class 3",ic:"📙",c:"from-sky-400 to-blue-500",t:"Nouns and verbs",
+w:[["Farmer","🧑‍🌾","A person who grows crops"],["Village","🏘️","A small place in the countryside where people live"],["Market","🛒","A place to buy and sell things"],["Harvest","🌾","To cut and collect ripe crops"],["River","🏞️","A big stream of flowing water"]],
+s:["The farmer works in the field","Children play near the river","We buy vegetables in the market","The villagers harvest the rice","Our village is very peaceful"],
+q:[["Which word is a noun?",["Teacher","Run","Happy"],0],["Which word is a verb?",["Jump","Table","Red"],0],["The cat ... milk.",["drinks","drink","drinking"],0],["Which is a naming word for a place?",["Village","Eat","Quick"],0],["Rani sings well. Which is the verb?",["sings","Rani","well"],0]]},
+{n:"Class 4",ic:"📕",c:"from-violet-400 to-purple-500",t:"Tenses and adjectives",
+w:[["Journey","🧳","A trip from one place to another"],["Festival","🎉","A special day celebrated by many people"],["Brave","🦁","Not afraid of danger"],["Neighbour","🏠","A person who lives near you"],["Library","📚","A place with many books to read"]],
+s:["Yesterday we visited our grandmother","She is reading a story book","The brave boy saved the puppy","We will celebrate the festival tomorrow","My neighbour helped us"],
+q:[["Yesterday I ... to school.",["went","go","going"],0],["Past tense of play?",["played","plays","playing"],0],["She ... a song now.",["is singing","sang","will sing"],0],["Tomorrow we ... visit the temple.",["will","did","was"],0],["Which word is an adjective?",["Brave","Run","Book"],0]]},
+{n:"Class 5",ic:"📓",c:"from-fuchsia-500 to-pink-600",t:"Grammar and meaning",
+w:[["Courage","💪","Strength to face fear"],["Honest","🤝","Always telling the truth"],["Environment","🌍","The nature around us"],["Discover","🔭","To find something new"],["Patient","⏳","Able to wait calmly"]],
+s:["Honest children always tell the truth","We must protect our environment","Scientists discover new things every day","She waited patiently for her turn","If you work hard, you will succeed"],
+q:[["She spoke softly. Which word is an adverb?",["softly","She","spoke"],0],["Opposite of honest?",["dishonest","kind","brave"],0],["Past tense of write?",["wrote","writed","written"],0],["He ... eaten lunch.",["has","have","is"],0],["The children ... playing.",["are","is","am"],0]]}
+]},
+te:{nm:"తెలుగు",ic:"🌺",col:"from-green-500 to-emerald-600",lang:"te-IN",SN:["📖 పదాలు","🧩 వాక్యాలు","🏆 క్విజ్"],L:[
+{n:"LKG",ic:"🔤",c:"from-pink-400 to-rose-500",t:"అచ్చులు (అ, ఆ, ఇ, ఈ, ఉ)",
+w:[["అమ్మ","👩","అ"],["ఆవు","🐄","ఆ"],["ఇల్లు","🏠","ఇ"],["ఈగ","🪰","ఈ"],["ఉడుత","🐿️","ఉ"]],
+s:["అ అంటే అమ్మ","ఆ అంటే ఆవు","ఇ అంటే ఇల్లు","ఈ అంటే ఈగ","ఉ అంటే ఉడుత"],
+q:[["'అ' తో మొదలయ్యే పదం ఏది?",["అమ్మ","ఆవు","ఇల్లు"],0],["ఆవు ఏ అక్షరంతో మొదలవుతుంది?",["ఆ","అ","ఇ"],0],["ఇల్లు ఏ అక్షరంతో మొదలవుతుంది?",["ఇ","ఈ","ఉ"],0],["ఏది అచ్చు?",["ఉ","క","మ"],0],["పాలు ఇచ్చే జంతువు ఏది?",["ఆవు","ఈగ","ఉడుత"],0]]},
+{n:"UKG",ic:"🔡",c:"from-orange-400 to-amber-500",t:"హల్లులు (క, చ, ప, మ, న)",
+w:[["కాకి","🐦","క"],["చేప","🐟","చ"],["పిల్లి","🐱","ప"],["మామిడి","🥭","మ"],["నక్క","🦊","న"]],
+s:["క అంటే కాకి","చ అంటే చేప","ప అంటే పిల్లి","మ అంటే మామిడి","న అంటే నక్క"],
+q:[["కాకి ఏ అక్షరంతో మొదలవుతుంది?",["క","చ","ప"],0],["నీటిలో ఉండేది ఏది?",["చేప","కాకి","నక్క"],0],["పండు ఏది?",["మామిడి","పిల్లి","కాకి"],0],["'ప' తో మొదలయ్యే పదం ఏది?",["పిల్లి","చేప","నక్క"],0],["ఏది హల్లు?",["మ","అ","ఆ"],0]]},
+{n:"1వ తరగతి",ic:"📘",c:"from-lime-400 to-green-500",t:"సులభ పదాలు, చిన్న వాక్యాలు",
+w:[["అమ్మ","👩"],["నాన్న","👨"],["చెట్టు","🌳"],["పుస్తకం","📖"],["పాలు","🥛"]],
+s:["ఇది ఒక చెట్టు","నేను పాలు తాగుతాను","అమ్మ అన్నం వండుతుంది","నాన్న పనికి వెళ్తారు","నాకు పుస్తకం ఇష్టం"],
+q:[["నేను పాలు ...",["తాగుతాను","తింటాను","చదువుతాను"],0],["మనం పుస్తకం ...",["చదువుతాం","తాగుతాం","తింటాం"],0],["చెట్టుకు ఉండేవి?",["ఆకులు","రెక్కలు","చక్రాలు"],0],["నాన్న అంటే ...",["తండ్రి","తల్లి","అన్న"],0],["పాలు ఏ రంగులో ఉంటాయి?",["తెల్లగా","ఎర్రగా","నల్లగా"],0]]},
+{n:"2వ తరగతి",ic:"📗",c:"from-teal-400 to-cyan-500",t:"పదాలు, వాక్యాలు",
+w:[["బడి","🏫"],["గురువు","🧑‍🏫"],["స్నేహితుడు","🤝"],["నీరు","💧"],["రైతు","🧑‍🌾"]],
+s:["నేను రోజూ బడికి వెళ్తాను","మా గురువు మంచివారు","నాకు చాలా స్నేహితులు ఉన్నారు","రైతు పొలంలో పని చేస్తాడు","మనం శుభ్రమైన నీరు తాగాలి"],
+q:[["'పెద్ద' కు వ్యతిరేక పదం?",["చిన్న","లావు","పొడవు"],0],["మనం చదువుకునే చోటు?",["బడి","పొలం","దుకాణం"],0],["రైతు పంట ...",["పండిస్తాడు","వండుతాడు","రాస్తాడు"],0],["బడిలో మనకు నేర్పేవారు?",["గురువు","రైతు","స్నేహితుడు"],0],["నేను బడికి ...",["వెళ్తాను","వెళ్తాడు","వెళ్తారు"],0]]},
+{n:"3వ తరగతి",ic:"📙",c:"from-sky-400 to-blue-500",t:"నామవాచకం, క్రియ",
+w:[["పల్లె","🏘️","గ్రామం, చిన్న ఊరు"],["సంత","🛒","వస్తువులు కొనే, అమ్మే చోటు"],["నది","🏞️","పెద్ద నీటి ప్రవాహం"],["పంట","🌾","పొలంలో పండించేది"],["పండుగ","🎉","అందరూ కలిసి జరుపుకునే రోజు"]],
+s:["పల్లెలో ప్రజలు ప్రశాంతంగా ఉంటారు","పిల్లలు నది దగ్గర ఆడుకుంటారు","మేము సంతలో కూరగాయలు కొంటాం","రైతులు పంట కోస్తారు","పండుగ రోజు ఇల్లు అందంగా ఉంటుంది"],
+q:[["నామవాచకం ఏది? (పేరు తెలిపే పదం)",["ఉపాధ్యాయుడు","పరిగెత్తు","ఎర్రని"],0],["క్రియ ఏది? (పని తెలిపే పదం)",["పాడు","బల్ల","తెల్లని"],0],["పిల్లి పాలు ...",["తాగుతుంది","తాగుతాడు","తాగారు"],0],["ఏది ఒక చోటు పేరు?",["పల్లె","తిను","వేగంగా"],0],["'రాణి పాడుతుంది' లో క్రియ ఏది?",["పాడుతుంది","రాణి","రాములు"],0]]},
+{n:"4వ తరగతి",ic:"📕",c:"from-violet-400 to-purple-500",t:"కాలాలు, విశేషణం",
+w:[["ప్రయాణం","🧳","ఒక చోటు నుండి మరో చోటుకు వెళ్ళడం"],["గ్రంథాలయం","📚","ఎన్నో పుస్తకాలు ఉండే చోటు"],["ధైర్యం","🦁","భయపడకుండా ఉండే గుణం"],["పొరుగువారు","🏠","మన ఇంటి పక్కన ఉండేవారు"],["సహాయం","🤲","ఇతరులకు చేసే మేలు"]],
+s:["నిన్న మేము అమ్మమ్మ ఇంటికి వెళ్ళాము","ఆమె కథల పుస్తకం చదువుతోంది","ధైర్యవంతుడైన బాలుడు కుక్కపిల్లను కాపాడాడు","రేపు మేము పండుగ జరుపుకుంటాం","పొరుగువారు మాకు సహాయం చేశారు"],
+q:[["భూతకాలం (గడిచిన కాలం) ఏది?",["వెళ్ళాను","వెళ్తాను","వెళ్తున్నాను"],0],["భవిష్యత్ కాలం (రాబోయేది) ఏది?",["రేపు వెళ్తాను","నిన్న వెళ్ళాను","ఇప్పుడు వెళ్తున్నాను"],0],["వర్తమాన కాలం (జరుగుతున్నది) ఏది?",["తింటున్నాను","తిన్నాను","రేపు తింటాను"],0],["విశేషణం ఏది? (గుణం తెలిపేది)",["అందమైన","పరుగెత్తు","పుస్తకం"],0],["నిన్న నేను బడికి ...",["వెళ్ళాను","వెళ్తాను","వెళ్తున్నాను"],0]]},
+{n:"5వ తరగతి",ic:"📓",c:"from-fuchsia-500 to-pink-600",t:"వ్యాకరణం, పద జ్ఞానం",
+w:[["నిజాయితీ","🤝","ఎప్పుడూ నిజం చెప్పే గుణం"],["పర్యావరణం","🌍","మన చుట్టూ ఉన్న ప్రకృతి"],["ఆవిష్కరణ","🔭","కొత్త విషయం కనుగొనడం"],["ఓర్పు","⏳","ప్రశాంతంగా వేచి ఉండే గుణం"],["శ్రమ","💪","కష్టపడి చేసే పని"]],
+s:["నిజాయితీపరులు ఎప్పుడూ నిజమే చెబుతారు","మనం పర్యావరణాన్ని కాపాడాలి","శాస్త్రవేత్తలు కొత్త విషయాలు కనుగొంటారు","ఆమె ఓర్పుతో ఎదురు చూసింది","కష్టపడి పని చేస్తే విజయం వస్తుంది"],
+q:[["'నిజం' కు వ్యతిరేక పదం?",["అబద్ధం","సత్యం","న్యాయం"],0],["'వెలుగు' కు వ్యతిరేక పదం?",["చీకటి","దీపం","కాంతి"],0],["'అమ్మ' కు సమానార్థక పదం?",["తల్లి","తండ్రి","అక్క"],0],["'ఇల్లు' కు బహువచనం?",["ఇళ్ళు","ఇల్లులు","ఇల్లు"],0],["'సూర్యుడు' కు సమానార్థక పదం?",["భానుడు","చంద్రుడు","నక్షత్రం"],0]]}
+]},
+ma:{nm:"Maths / గణితం",ic:"🔢",col:"from-sky-500 to-indigo-600",lang:"en-IN",SN:["🔢 Numbers / సంఖ్యలు","🧩 Sums / లెక్కలు","🏆 Quiz / క్విజ్"],L:[
+{n:"LKG",ic:"🍎",c:"from-pink-400 to-rose-500",t:"Numbers 1–5 · సంఖ్యలు",
+w:[["One","🍎","ఒకటి"],["Two","🍎🍎","రెండు"],["Three","🍎🍎🍎","మూడు"],["Four","🍎🍎🍎🍎","నాలుగు"],["Five","🍎🍎🍎🍎🍎","ఐదు"]],
+s:["One and one is two","Two and one is three","Three and one is four","Four and one is five","Five is more than four"],
+q:[["Which number is bigger?",["5","2","1"],0],["What comes after 2?",["3","4","1"],0],["How many? 🍎🍎🍎🍎",["4","3","5"],0],["Which number is smaller?",["1","4","5"],0],["What comes after 4?",["5","6","3"],0]]},
+{n:"UKG",ic:"🔟",c:"from-orange-400 to-amber-500",t:"Numbers 6–10 · సంఖ్యలు",
+w:[["Six","6","ఆరు"],["Seven","7","ఏడు"],["Eight","8","ఎనిమిది"],["Nine","9","తొమ్మిది"],["Ten","10","పది"]],
+s:["Six and one is seven","Seven and one is eight","Eight and one is nine","Nine and one is ten","Ten is the biggest"],
+q:[["What comes after 7?",["8","9","6"],0],["Which number is bigger?",["10","6","7"],0],["5 + 1 = ?",["6","7","5"],0],["How many? 🍎🍎🍎🍎🍎🍎🍎",["7","6","8"],0],["What comes before 9?",["8","10","7"],0]]},
+{n:"Class 1",ic:"➕",c:"from-lime-400 to-green-500",t:"Add and subtract · కూడిక, తీసివేత",
+w:[["Eleven","11","పదకొండు"],["Twelve","12","పన్నెండు"],["Fifteen","15","పదిహేను"],["Eighteen","18","పద్దెనిమిది"],["Twenty","20","ఇరవై"]],
+s:["Two plus three is five","Five plus four is nine","Ten minus two is eight","Seven minus three is four","Nine plus nine is eighteen"],
+q:[["4 + 3 = ?",["7","6","8"],0],["9 − 4 = ?",["5","4","6"],0],["8 + 2 = ?",["10","9","11"],0],["10 − 7 = ?",["3","2","4"],0],["6 + 6 = ?",["12","11","13"],0]]},
+{n:"Class 2",ic:"💯",c:"from-teal-400 to-cyan-500",t:"Place value and tables · స్థానవిలువ, ఎక్కాలు",
+w:[["Thirty","30","ముప్పై"],["Forty five","45","నలభై ఐదు"],["Sixty","60","అరవై"],["Ninety nine","99","తొంభై తొమ్మిది"],["One hundred","100","వంద"]],
+s:["Twenty plus thirty is fifty","Sixty minus ten is fifty","Two twos are four","Five fives are twenty five","Ten tens are one hundred"],
+q:[["25 + 14 = ?",["39","38","40"],0],["50 − 20 = ?",["30","40","20"],0],["2 × 5 = ?",["10","7","12"],0],["In 47, which is the tens digit?",["4","7","47"],0],["3 × 3 = ?",["9","6","12"],0]]},
+{n:"Class 3",ic:"✖️",c:"from-sky-400 to-blue-500",t:"Signs, × and ÷ · గుణకారం, భాగహారం",
+w:[["Plus","+","కూడిక"],["Minus","−","తీసివేత"],["Times","×","గుణకారం"],["Divide","÷","భాగహారం"],["Equal","=","సమానం"]],
+s:["Six times four is twenty four","Eighteen divided by three is six","One hundred plus fifty is one hundred fifty","Five hundred minus two hundred is three hundred","Seven sevens are forty nine"],
+q:[["6 × 4 = ?",["24","20","28"],0],["18 ÷ 3 = ?",["6","5","7"],0],["120 + 35 = ?",["155","145","165"],0],["500 − 200 = ?",["300","700","400"],0],["7 × 7 = ?",["49","42","56"],0]]},
+{n:"Class 4",ic:"➗",c:"from-violet-400 to-purple-500",t:"Fractions and perimeter · భిన్నాలు",
+w:[["One half","½","సగం"],["One quarter","¼","పావు"],["Three quarters","¾","ముప్పావు"],["One thousand","1000","వెయ్యి"],["Ten thousand","10000","పదివేలు"]],
+s:["Half of ten is five","Four times twelve is forty eight","One thousand minus one is nine hundred ninety nine","A square has four equal sides","Perimeter is the distance around a shape"],
+q:[["Half of 20 = ?",["10","5","15"],0],["12 × 4 = ?",["48","46","52"],0],["1000 − 1 = ?",["999","990","900"],0],["Perimeter of a square with side 3 = ?",["12","9","6"],0],["One quarter of 8 = ?",["2","4","1"],0]]},
+{n:"Class 5",ic:"📐",c:"from-fuchsia-500 to-pink-600",t:"Decimals, percent, area · దశాంశాలు",
+w:[["Zero point five","0.5","సున్నా పాయింట్ ఐదు"],["Fifty percent","50%","యాభై శాతం"],["One lakh","1,00,000","లక్ష"],["Twenty five percent","25%","ఇరవై ఐదు శాతం"],["Ten lakh","10,00,000","పది లక్షలు"]],
+s:["Half is fifty percent","One lakh has five zeros","Area of a rectangle is length times width","Twelve is a multiple of three","Ten is a factor of one hundred"],
+q:[["50% of 200 = ?",["100","50","150"],0],["Area of a rectangle 5 by 4 = ?",["20","18","9"],0],["LCM of 2 and 3 = ?",["6","5","1"],0],["0.5 + 0.25 = ?",["0.75","0.7","0.8"],0],["1,000 × 10 = ?",["10,000","1,000","100"],0]]}
+]}};
+const P={en:x=>x[2]?"Which word means: "+x[2]:"What is this?",te:(x,li)=>li>=2&&x[2]?"ఈ అర్థం గల పదం ఏది? "+x[2]:"ఇది ఏమిటి?",ma:()=>"ఇది ఎంత? What is this?"};
+const GOOD=["శభాష్! Super! 🌟","అద్భుతం! Wonderful! 🎉","చాలా బాగుంది! Great job! 👏","సూపర్! Excellent! 🥳"];
+const BAD=["మంచి ప్రయత్నం! Nice try! 💪","దాదాపు వచ్చింది! Almost! 😊","ప్రయత్నించు! Keep going! 🌈"];
+const MSG={ask:"Tap and say it correctly to continue · సరిగ్గా చెబితేనే ముందుకు",ok:"✅ Well said! బాగా చెప్పావు!",speak:"Tap & Say · నొక్కి చెప్పు",listening:"Listening… speak now · ఇప్పుడు చెప్పండి 🎧",retry:"Try again, say it clearly · మళ్ళీ చెప్పండి 😊",denied:"Microphone is blocked. Allow the microphone and try again · మైక్ Allow చేయండి",nomic:"Speech is not supported here. Open this page in Chrome · Chrome లో తెరవండి",skip:"Mic not available, moving on ✅ · మైక్ లేదు, ముందుకు వెళ్దాం"};
+const TH=.6,app=document.getElementById("app");
+let SUB="en",R={},D={};try{D=JSON.parse(localStorage.getItem("flnPotharam")||"{}")}catch(e){}
+const save=()=>{try{localStorage.setItem("flnPotharam",JSON.stringify(D))}catch(e){}};
+const LV=()=>SUBJ[SUB].L,SNs=()=>SUBJ[SUB].SN,kk=g=>SUB+"-"+g;
+const unl=g=>g===0||D[kk(g-1)]!==undefined;
+const pick1=a=>a[Math.floor(Math.random()*a.length)];
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const ic=(n,c="")=>`<i data-lucide="${n}" class="${c}"></i>`;
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
+function draw(h){app.innerHTML=h;try{lucide.createIcons()}catch(e){}window.scrollTo(0,0)}
+function toast(m){let b=document.getElementById("tt");if(!b){b=document.createElement("div");b.id="tt";b.className="fixed left-4 right-4 bottom-6 z-50 bg-gray-800 text-white rounded-2xl p-3 text-center font-bold shadow-lg";document.body.appendChild(b)}b.textContent=m;b.style.display="block";clearTimeout(b._t);b._t=setTimeout(()=>b.style.display="none",4500)}
+function hasTe(){try{return speechSynthesis.getVoices().some(v=>v.lang.toLowerCase().startsWith("te"))}catch(e){return false}}
+function say(t){try{if(!("speechSynthesis" in window)){toast(MSG.nomic);return}
+const ss=speechSynthesis,lg=SUBJ[SUB].lang,p=lg.slice(0,2);ss.cancel();ss.resume();const u=new SpeechSynthesisUtterance(t);u.lang=lg;u.rate=SUB==="te"?.75:.8;
+const vs=ss.getVoices(),v=vs.find(v=>v.lang.replace("_","-")===lg)||vs.find(v=>v.lang.toLowerCase().startsWith(p));if(v)u.voice=v;else if(SUB==="te")toast("తెలుగు వాయిస్ లేదు: Settings → Text-to-speech లో Telugu install చేయండి");
+setTimeout(()=>ss.speak(u),80)}catch(e){}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-s]");if(b)say(b.dataset.s)});
+function confetti(){const em=["⭐","🎉","🌟","🎈","✨"];for(let i=0;i<30;i++){const s=document.createElement("span");s.className="fall";s.textContent=pick1(em);s.style.left=Math.random()*100+"vw";s.style.animationDelay=Math.random()*.8+"s";document.body.appendChild(s);setTimeout(()=>s.remove(),3500)}}
+
+const ON="zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split(" "),TN="_ _ twenty thirty forty fifty sixty seventy eighty ninety".split(" ");
+function n2w(n){if(n<20)return ON[n];if(n<100)return TN[n/10|0]+(n%10?" "+ON[n%10]:"");if(n<1000)return ON[n/100|0]+" hundred"+(n%100?" "+n2w(n%100):"");return String(n)}
+function norm(s){return s.toLowerCase().replace(/(\d+)\.(\d+)/g,"$1 point $2").replace(/%/g," percent").replace(/(\d+)/g,m=>n2w(+m)).replace(/[^\p{L}\p{M}\p{N}\s]/gu,"").replace(/\s+/g," ").trim()}
+function sim(a,b){if(a===b)return 1;if(!a||!b)return 0;const m=a.length,n=b.length,d=[];for(let i=0;i<=m;i++)d[i]=[i];for(let j=1;j<=n;j++)d[0][j]=j;for(let i=1;i<=m;i++)for(let j=1;j<=n;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return 1-d[m][n]/Math.max(m,n)}
+
+function home(){
+let h=`<div class="text-center rounded-3xl bg-gradient-to-r from-amber-400 to-orange-500 text-white p-5 shadow-lg mb-4"><div class="text-4xl font-extrabold">FLN MPPS POTHARAM</div><div class="text-lg font-bold">Mdl: Dubbak, Dist: Siddipet</div><div class="mt-1 text-sm">🌟 Learn · Speak · Play 🌟</div></div>
+<div class="text-center font-extrabold text-xl mb-3">Choose a subject · సబ్జెక్ట్ ఎంచుకోండి 👇</div>`;
+Object.keys(SUBJ).forEach(k=>{const s=SUBJ[k],tot=s.L.length*3,ks=Object.keys(D).filter(x=>x.startsWith(k+"-")),st=ks.reduce((a,x)=>a+D[x],0);
+h+=`<button onclick="openSub('${k}')" class="w-full text-left rounded-3xl bg-gradient-to-r ${s.col} text-white p-4 mb-4 shadow-lg flex items-center gap-4"><span class="text-6xl">${s.ic}</span><div class="flex-1"><div class="text-3xl font-extrabold">${s.nm}</div><div class="text-sm font-bold">${ks.length} / ${tot} stages · ⭐ ${st}</div><div class="h-3 bg-white/30 rounded-full mt-2 overflow-hidden"><div class="h-full bg-white rounded-full" style="width:${ks.length/tot*100}%"></div></div></div>${ic("chevron-right","w-8 h-8")}</button>`});
+draw(h)}
+function openSub(k){SUB=k;map()}
+function map(){
+const s=SUBJ[SUB],tot=s.L.length*3,ks=Object.keys(D).filter(x=>x.startsWith(SUB+"-")),st=ks.reduce((a,x)=>a+D[x],0);
+let h=`<div class="flex items-center justify-between mb-3"><button onclick="home()" class="bg-white rounded-full px-4 py-2 font-bold shadow flex items-center gap-1">${ic("home","w-4 h-4")} Home</button><h1 class="text-2xl font-extrabold">${s.ic} ${s.nm}</h1>
+<div class="bg-yellow-300 rounded-full px-4 py-2 font-extrabold shadow flex items-center gap-1">${ic("star","w-5 h-5 fill-orange-500 text-orange-600")} ${st}</div></div>
+${SUB==="te"&&!hasTe()?`<div class="bg-amber-100 border-2 border-amber-300 rounded-2xl p-3 mb-3 text-sm font-bold">🔈 Telugu voice not found. Phone Settings → Text-to-speech → install Telugu · తెలుగు వాయిస్ ఇన్‌స్టాల్ చేయండి</div>`:""}
+<div class="bg-white rounded-2xl p-3 shadow mb-4"><div class="flex justify-between font-bold text-sm mb-1"><span>My progress · నా ప్రగతి</span><span>${ks.length} / ${tot}</span></div>
+<div class="h-4 bg-orange-100 rounded-full overflow-hidden"><div class="h-full bg-green-500 rounded-full" style="width:${ks.length/tot*100}%"></div></div>
+<p class="text-sm mt-2 text-gray-600">Say it right and score 80%+ to unlock the next stage 🔓 · 80% వస్తేనే తరువాతి దశ</p></div>`;
+s.L.forEach((lv,li)=>{
+h+=`<div class="rounded-3xl bg-gradient-to-r ${lv.c} p-4 mb-4 shadow-lg text-white"><div class="flex items-center gap-3 mb-3"><span class="text-4xl">${lv.ic}</span><div><div class="text-2xl font-extrabold">${lv.n}</div><div class="text-sm opacity-90">${lv.t}</div></div></div><div class="grid grid-cols-3 gap-2">`;
+for(let si=0;si<3;si++){const g=li*3+si,ok=unl(g),v=D[kk(g)];
+h+=ok?`<button onclick="start(${li},${si})" class="bg-white text-gray-800 rounded-2xl py-3 px-1 font-bold text-xs shadow"><div>${s.SN[si]}</div><div class="text-lg">${v?"⭐".repeat(v):"▶️"}</div></button>`
+:`<button disabled class="bg-black/25 text-white/80 rounded-2xl py-3 px-1 font-bold text-xs cursor-not-allowed"><div>${s.SN[si]}</div><div class="flex justify-center">${ic("lock","w-5 h-5")}</div></button>`}
+h+=`</div></div>`});
+draw(h)}
+
+function start(li,si){
+const lv=LV()[li];R={li,si,i:0,score:0,ci:0,lock:false,sp:[]};
+if(si===0){R.cards=lv.w.map(x=>({big:x[1],t:x[0],sub:SUB==="te"&&li<2?x[2]+" – "+x[0]:(x[2]||""),say:x[0]}));
+R.qs=lv.w.map(x=>({t:"m",p:P[SUB](x,li),e:x[1],a:x[0],say:x[0],o:shuf([x[0],...shuf(lv.w.filter(y=>y!==x)).slice(0,2).map(y=>y[0])])}))}
+else if(si===1){R.cards=lv.s.map(s=>({big:"💬",t:s,sub:"",say:s}));R.qs=lv.s.map(s=>({t:"b",s}))}
+else{R.cards=null;R.qs=lv.q.map(q=>({t:"m",p:q[0],e:"❓",a:q[1][q[2]],say:q[0],o:shuf(q[1])}))}
+R.cards?card():ask()}
+const topBtn=()=>`<button onclick="map()" class="mb-3 bg-white rounded-full px-4 py-2 font-bold shadow flex items-center gap-1">${ic("arrow-left","w-4 h-4")} Back · వెనక్కి</button>`;
+
+function card(){
+const c=R.cards[R.ci],n=R.cards.length,ok=R.sp[R.ci];
+draw(topBtn()+`<div class="bg-white rounded-3xl p-6 shadow-lg text-center pop"><div class="text-sm font-bold text-gray-500 mb-2">${LV()[R.li].n} · ${SNs()[R.si]} · ${R.ci+1}/${n}</div>
+<div class="${R.si===0?"text-7xl":"text-6xl"} my-4 break-words">${c.big}</div><div class="${R.si===0?"text-5xl":"text-3xl"} font-extrabold text-indigo-600">${esc(c.t)}</div>
+${c.sub?`<div class="text-lg text-gray-600 mt-2">${esc(c.sub)}</div>`:""}
+<button data-s="${esc(c.say)}" class="mt-5 bg-sky-500 text-white rounded-full px-6 py-3 font-extrabold text-lg shadow inline-flex items-center gap-2">${ic("volume-2","w-6 h-6")} Listen · వినండి</button></div>
+<div class="bg-white rounded-2xl p-3 mt-3 shadow text-center"><div class="font-bold mb-2">${ok?MSG.ok:"🎤 "+MSG.ask}</div>${ok?"":`<button onclick="listen()" class="bg-rose-500 text-white rounded-full px-6 py-3 font-extrabold shadow inline-flex items-center gap-2">${ic("mic","w-5 h-5")} ${MSG.speak}</button><div id="sp" class="mt-2 font-bold text-orange-600 min-h-[24px]"></div>`}</div>
+<div class="flex justify-between mt-4 gap-3"><button ${R.ci?"":"disabled"} onclick="R.ci--;card();say(R.cards[R.ci].say)" class="flex-1 bg-white rounded-2xl py-3 font-bold shadow disabled:opacity-40">◀ Back</button>
+<button ${ok?"":"disabled"} onclick="nextCard()" class="flex-1 bg-green-500 text-white rounded-2xl py-3 font-extrabold shadow disabled:opacity-40">${R.ci===n-1?"Play 🎮 ఆట":"Next ▶ తరువాత"}</button></div>`)}
+function listen(){
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition,m=document.getElementById("sp");
+if(!SR){skip(MSG.skip);return}
+try{const t=norm(R.cards[R.ci].say),r=new SR();r.lang=SUBJ[SUB].lang;r.maxAlternatives=5;m.textContent=MSG.listening;
+r.onresult=e=>{const good=[...e.results[0]].some(a=>sim(norm(a.transcript),t)>=TH);if(good){R.sp[R.ci]=true;confetti();card()}else m.textContent=MSG.retry};
+r.onerror=e=>{if(["not-allowed","service-not-allowed","audio-capture","network","language-not-supported"].includes(e.error))skip(MSG.skip);else m.textContent=MSG.retry};
+r.start()}catch(e){skip(MSG.skip)}}
+function skip(msg){const m=document.getElementById("sp"),c=R.ci;if(m)m.textContent=msg;setTimeout(()=>{if(R.ci===c&&!R.sp[c]){R.sp[c]=true;confetti();card()}},900)}
+function nextCard(){if(!R.sp[R.ci])return;if(R.ci<R.cards.length-1){R.ci++;card();say(R.cards[R.ci].say)}else ask()}
+
+function ask(){
+R.lock=false;const q=R.qs[R.i],n=R.qs.length;
+const bar=`<div class="h-3 bg-orange-100 rounded-full overflow-hidden mb-3"><div class="h-full bg-orange-400" style="width:${R.i/n*100}%"></div></div><div class="text-sm font-bold text-gray-500 mb-2">${LV()[R.li].n} · ${SNs()[R.si]} · ${R.i+1}/${n}</div>`;
+if(q.t==="m"){
+draw(topBtn()+bar+`<div class="bg-white rounded-3xl p-5 shadow-lg text-center pop"><div class="text-6xl mb-2 break-words">${q.e}</div><div class="text-xl font-extrabold mb-3">${esc(q.p)}</div>
+<button data-s="${esc(q.say)}" class="mb-4 bg-sky-500 text-white rounded-full px-5 py-2 font-bold inline-flex items-center gap-2">${ic("volume-2","w-5 h-5")} Listen · వినండి</button>
+<div class="grid gap-3">${q.o.map((o,i)=>`<button id="o${i}" onclick="pick(${i})" class="bg-indigo-100 text-indigo-800 rounded-2xl py-4 text-2xl font-extrabold shadow">${esc(o)}</button>`).join("")}</div>
+<div id="fb" class="mt-4 text-2xl font-extrabold min-h-[40px]"></div></div>`);
+if(R.si===2)say(q.say)}
+else{
+R.words=q.s.split(" ");R.sh=shuf(R.words);R.used=[];
+draw(topBtn()+bar+`<div class="bg-white rounded-3xl p-5 shadow-lg text-center pop"><div class="text-xl font-extrabold mb-1">Put the words in order 🧩 · సరైన క్రమంలో పెట్టండి</div>
+<button data-s="${esc(q.s)}" class="mb-3 bg-sky-500 text-white rounded-full px-5 py-2 font-bold inline-flex items-center gap-2">${ic("volume-2","w-5 h-5")} Hear · వినండి</button>
+<div id="slot" class="min-h-[64px] bg-yellow-50 border-4 border-dashed border-yellow-300 rounded-2xl p-2 flex flex-wrap gap-2 justify-center items-center mb-3"></div>
+<div id="chips" class="flex flex-wrap gap-2 justify-center"></div>
+<button onclick="undo()" class="mt-3 text-sm font-bold text-gray-500 underline">↩ Undo</button>
+<div id="fb" class="mt-3 text-2xl font-extrabold min-h-[40px]"></div></div>`);
+chips()}}
+function chips(){
+document.getElementById("slot").innerHTML=R.used.map(i=>`<span class="bg-green-200 rounded-xl px-3 py-2 font-extrabold text-lg">${esc(R.sh[i])}</span>`).join("")||'<span class="text-gray-400 font-bold">Tap the words · పదాలను నొక్కండి</span>';
+document.getElementById("chips").innerHTML=R.sh.map((w,i)=>R.used.includes(i)?"":`<button onclick="chip(${i})" class="bg-indigo-100 text-indigo-800 rounded-xl px-4 py-3 text-xl font-extrabold shadow">${esc(w)}</button>`).join("")}
+function undo(){if(R.lock)return;R.used.pop();chips()}
+function chip(i){
+if(R.lock)return;R.used.push(i);chips();
+if(R.used.length===R.words.length){const ans=R.used.map(k=>R.sh[k]).join(" ");reply(ans===R.qs[R.i].s,"Correct: "+R.qs[R.i].s,R.qs[R.i].s)}}
+function pick(i){
+if(R.lock)return;const q=R.qs[R.i],ok=q.o[i]===q.a;
+document.getElementById("o"+i).className+=ok?" !bg-green-400 !text-white":" !bg-red-300 shake";
+if(!ok)q.o.forEach((o,k)=>{if(o===q.a)document.getElementById("o"+k).className+=" !bg-green-400 !text-white"});
+reply(ok,"Correct answer · సరైన జవాబు: "+q.a,R.si===0?q.a:null)}
+function reply(ok,wrongMsg,speak){
+R.lock=true;if(ok)R.score++;
+const fb=document.getElementById("fb"),last=R.i===R.qs.length-1;
+fb.innerHTML=`<div class="${ok?"text-green-600":"text-orange-600"} pop">${ok?pick1(GOOD):pick1(BAD)}</div>${ok?"":`<div class="text-base text-gray-700">${esc(wrongMsg)}</div>`}
+<button onclick="R.i++;${last?"finish()":"ask()"}" class="mt-3 bg-green-500 text-white rounded-2xl px-8 py-3 font-extrabold shadow">${last?"Result · ఫలితం 🏁":"Next ▶ తరువాత"}</button>`;
+if(ok)confetti();if(speak)say(speak)}
+
+function finish(){
+const n=R.qs.length,pct=Math.round(R.score/n*100),pass=pct>=80,stars=R.score===n?3:pass?2:0,g=R.li*3+R.si;
+if(pass){D[kk(g)]=Math.max(D[kk(g)]||0,stars);save();confetti();say(SUB==="te"?"శభాష్":"Well done")}
+const nx=g+1<LV().length*3;
+draw(`<div class="bg-white rounded-3xl p-6 shadow-lg text-center mt-6 pop"><div class="text-7xl">${pass?"🏆":"💪"}</div>
+<h2 class="text-3xl font-extrabold mt-2 ${pass?"text-green-600":"text-orange-600"}">${pass?"Well done! శభాష్!":"Good try! మంచి ప్రయత్నం!"}</h2>
+<div class="text-5xl my-3">${pass?"⭐".repeat(stars):"☆☆☆"}</div>
+<div class="text-xl font-bold">${R.score} / ${n} (${pct}%)</div>
+<p class="mt-2 text-gray-600 font-bold">${pass?(nx?"Next stage unlocked! 🔓 తరువాతి దశ తెరుచుకుంది":"All done! 🎓 అన్నీ పూర్తయ్యాయి"):"You need 80% · 80% కావాలి. Try again · మళ్ళీ ప్రయత్నించు!"}</p>
+<div class="mt-5 grid gap-3">${pass&&nx?`<button onclick="start(${Math.floor((g+1)/3)},${(g+1)%3})" class="bg-green-500 text-white rounded-2xl py-3 text-lg font-extrabold shadow">Next stage ▶ తరువాతి దశ</button>`:""}
+${pass?"":`<button onclick="start(${R.li},${R.si})" class="bg-orange-500 text-white rounded-2xl py-3 text-lg font-extrabold shadow">Try again 🔁 మళ్ళీ</button>`}
+<button onclick="map()" class="bg-indigo-100 text-indigo-800 rounded-2xl py-3 text-lg font-extrabold">🗺️ Levels · స్థాయిలు</button>
+<button onclick="home()" class="bg-amber-100 text-amber-800 rounded-2xl py-3 text-lg font-extrabold">🏠 Home</button></div></div>`)}
+home();
+</script>
+</body>
+</html>
